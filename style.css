@@ -87,3 +87,12 @@ html, body {
 #startBtn:active {
     transform: scale(0.95);
 }
+
+#fb-status {
+    font-size: 16px;
+    padding: 4px 8px;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 12px;
+    display: inline-block;
+    margin-bottom: 5px;
+}
