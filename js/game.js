@@ -177,6 +177,29 @@ Events.on(render, 'afterRender', () => {
     ctx.save();
     ctx.translate(-render.bounds.min.x, -render.bounds.min.y);
 
+    // === C.3: Trail kelereng ===
+    marbles.forEach(m => {
+        if (m.plugin.finished || !m.plugin.trail) return;
+        const trail = m.plugin.trail;
+        trail.forEach((pt, i) => {
+            const t = (i + 1) / trail.length;
+            const size = 3 + t * 10;
+            ctx.globalAlpha = t * 0.35;
+            ctx.beginPath();
+            ctx.arc(pt.x, pt.y, size, 0, Math.PI * 2);
+            ctx.fillStyle = m.plugin.color;
+            ctx.fill();
+        });
+        ctx.globalAlpha = 1;
+    });
+
+    // === C.3: Marble 3D-look ===
+    marbles.forEach(m => {
+        if (m.plugin.finished) return;
+        drawMarble3D(ctx, m.position.x, m.position.y, 15, m.plugin.color);
+    });
+
+
     marbles.forEach(m => {
         if (m.plugin.finished) return;
 
@@ -331,7 +354,7 @@ document.getElementById('startBtn').addEventListener('click', async () => {
         const marble = Bodies.circle(x, y, 15, {
             restitution: 0.6,
             friction: 0.01,
-            render: { fillStyle: color, strokeStyle: '#fff', lineWidth: 2 },
+            render: { visible: false },
             label: nama,
             plugin: { color: color, name: nama, finished: false, finishTime: 0 }
         });
@@ -374,7 +397,7 @@ function addMarble(name) {
     const marble = Bodies.circle(x, y, 15, {
         restitution: 0.6,
         friction: 0.01,
-        render: { fillStyle: color, strokeStyle: '#fff', lineWidth: 2 },
+        render: { visible: false },
         label: cleanName,
         plugin: { color: color, name: cleanName, finished: false, finishTime: 0 }
     });
@@ -627,4 +650,75 @@ window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => location.reload(), 300);
         });
     }
+});
+
+
+// ============================================
+// Task C.3: Marble 3D-Look Helpers
+// ============================================
+
+function hexToRgb(hex) {
+    hex = String(hex).replace('#', '');
+    if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
+    const n = parseInt(hex, 16);
+    return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+}
+
+function shadeColor(hex, percent) {
+    const { r, g, b } = hexToRgb(hex);
+    const t = percent < 0 ? 0 : 255;
+    const p = Math.abs(percent) / 100;
+    return 'rgb(' +
+        Math.round((t - r) * p + r) + ',' +
+        Math.round((t - g) * p + g) + ',' +
+        Math.round((t - b) * p + b) + ')';
+}
+
+function drawMarble3D(ctx, x, y, r, color) {
+    // Shadow bawah
+    ctx.beginPath();
+    ctx.ellipse(x, y + r + 3, r * 1.05, r * 0.35, 0, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(0,0,0,0.35)';
+    ctx.fill();
+
+    // Radial gradient body 3D
+    const grad = ctx.createRadialGradient(
+        x - r * 0.35, y - r * 0.35, r * 0.1,
+        x, y, r * 1.05
+    );
+    grad.addColorStop(0, shadeColor(color, 60));
+    grad.addColorStop(0.5, color);
+    grad.addColorStop(1, shadeColor(color, -35));
+
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fillStyle = grad;
+    ctx.fill();
+
+    // Ring putih tipis
+    ctx.strokeStyle = 'rgba(255,255,255,0.8)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Highlight besar
+    ctx.beginPath();
+    ctx.arc(x - r * 0.4, y - r * 0.4, r * 0.28, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,255,255,0.85)';
+    ctx.fill();
+
+    // Highlight kecil
+    ctx.beginPath();
+    ctx.arc(x + r * 0.3, y + r * 0.25, r * 0.12, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,255,255,0.4)';
+    ctx.fill();
+}
+
+// Update trail setiap frame
+Events.on(engine, 'afterUpdate', () => {
+    marbles.forEach(m => {
+        if (m.plugin.finished) return;
+        if (!m.plugin.trail) m.plugin.trail = [];
+        m.plugin.trail.push({ x: m.position.x, y: m.position.y });
+        if (m.plugin.trail.length > 8) m.plugin.trail.shift();
+    });
 });
