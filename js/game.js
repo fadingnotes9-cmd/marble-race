@@ -313,11 +313,14 @@ document.getElementById('startBtn').addEventListener('click', async () => {
         return;
     }
 
+    // PAUSE PHYSICS selama countdown (biar kelereng diam dulu)
+    engine.timing.timeScale = 0;
+
     // Buat kelereng dari pesertaList
     for (const nama of pesertaList) {
         const color = colors[Math.floor(Math.random() * colors.length)];
         const x = (W / 2) + (Math.random() * 100 - 50);
-        const y = 50 + (marbles.length * 35);
+        const y = 50 + Math.random() * 170;
         const marble = Bodies.circle(x, y, 15, {
             restitution: 0.6,
             friction: 0.01,
@@ -338,6 +341,8 @@ document.getElementById('startBtn').addEventListener('click', async () => {
     setupFirebaseListener();
 
     startCountdown(() => {
+        // RESUME physics — kelereng mulai jatuh
+        engine.timing.timeScale = 1;
         raceRunning = true;
         raceStartTime = Date.now();
         timer.style.display = 'block';
