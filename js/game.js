@@ -192,8 +192,8 @@ Events.on(render, 'afterRender', () => {
 
     ctx.restore();
 
-    if (finishOrder.length > 0) {
-        drawLeaderboard(ctx);
+    if (marbles.length > 0) {
+        drawLiveLeaderboard(ctx);
     }
 });
 
@@ -297,6 +297,8 @@ document.getElementById('startBtn').addEventListener('click', async () => {
     const timer = document.getElementById('timer');
 
     ui.classList.add('hidden');
+    const _panel = document.getElementById('pesertaPanel');
+    if (_panel) _panel.style.display = 'none';
     cameraY = 0;
     cameraTargetY = 0;
     finishOrder = [];
@@ -469,9 +471,10 @@ function hapusPeserta(idx) {
 
 // Reset semua
 function resetPeserta() {
-    if (pesertaList.length === 0) return;
     pesertaList = [];
     renderPeserta();
+    const _panel = document.getElementById('pesertaPanel');
+    if (_panel) _panel.style.display = 'flex';
     showNotif('Peserta di-reset');
 }
 
@@ -497,3 +500,94 @@ document.getElementById('resetPesertaBtn').addEventListener('click', resetPesert
 
 // Initial render
 renderPeserta();
+
+
+// ============================================
+// Task 2.8: Live Leaderboard (MotoGP-Style)
+// ============================================
+function drawLiveLeaderboard(ctx) {
+    if (marbles.length === 0) return;
+
+    // Finished dulu (by rank), lalu aktif (by y desc = paling depan atas)
+    const finished = finishOrder.map(f => ({
+        name: f.name, color: f.color, time: f.time, finished: true
+    }));
+    const active = marbles
+        .filter(m => !m.plugin.finished)
+        .map(m => ({
+            name: m.plugin.name, color: m.plugin.color,
+            y: m.position.y, finished: false
+        }))
+        .sort((a, b) => b.y - a.y);
+
+    const all = finished.concat(active);
+    if (all.length === 0) return;
+
+    const rowH = 24;
+    const lbW = Math.min(180, W * 0.5);
+    const lbH = (all.length * rowH) + 42;
+    const lbX = 10;
+    const lbY = 70;
+
+    // Background
+    ctx.fillStyle = 'rgba(10, 10, 21, 0.9)';
+    ctx.strokeStyle = '#e94560';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(lbX, lbY, lbW, lbH, 10);
+    else ctx.rect(lbX, lbY, lbW, lbH);
+    ctx.fill();
+    ctx.stroke();
+
+    // Header
+    ctx.font = 'bold 12px Arial';
+    ctx.fillStyle = '#e94560';
+    ctx.textAlign = 'left';
+    ctx.fillText('🏁 POSISI', lbX + 10, lbY + 22);
+
+    // Rows
+    all.forEach((item, i) => {
+        const y = lbY + 44 + (i * rowH);
+
+        // Nomor posisi
+        ctx.font = 'bold 13px Arial';
+        ctx.fillStyle = item.finished ? '#f5a623' : '#fff';
+        ctx.fillText((i + 1) + '.', lbX + 8, y);
+
+        // Titik warna
+        ctx.beginPath();
+        ctx.arc(lbX + 36, y - 4, 6, 0, Math.PI * 2);
+        ctx.fillStyle = item.color;
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // Nama
+        ctx.font = 'bold 12px Arial';
+        ctx.fillStyle = item.finished ? '#00b894' : '#fff';
+        ctx.fillText(item.name.substring(0, 9), lbX + 48, y);
+
+        // Waktu finis
+        if (item.finished && item.time) {
+            ctx.font = '10px Courier New';
+            ctx.fillStyle = '#00b894';
+            ctx.fillText(formatTime(item.time), lbX + 108, y);
+        }
+    });
+}
+
+// Auto-show panel + tombol saat semua kelereng finish
+Events.on(engine, 'afterUpdate', () => {
+    if (!raceRunning) return;
+    if (marbles.length === 0) return;
+    if (marbles.every(m => m.plugin.finished)) {
+        raceRunning = false;
+        const _panel = document.getElementById('pesertaPanel');
+        if (_panel) _panel.style.display = 'flex';
+        setTimeout(() => {
+            const _ui = document.getElementById('ui');
+            if (_ui) _ui.classList.remove('hidden');
+        }, 1500);
+    }
+});
