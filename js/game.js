@@ -292,7 +292,7 @@ function startCountdown(callback) {
     next();
 }
 
-document.getElementById('startBtn').addEventListener('click', () => {
+document.getElementById('startBtn').addEventListener('click', async () => {
     const ui = document.getElementById('ui');
     const timer = document.getElementById('timer');
 
@@ -302,7 +302,17 @@ document.getElementById('startBtn').addEventListener('click', () => {
     finishOrder = [];
     raceRunning = false;
 
-    createMarbles(8);
+    // Clear kelereng lama
+    marbles.forEach(m => Composite.remove(world, m));
+    marbles.length = 0;
+
+    // Clear Firebase joins (mulai fresh)
+    if (typeof clearJoins === 'function') {
+        try { await clearJoins(); } catch(e) { console.warn('clearJoins:', e); }
+    }
+
+    // Setup Firebase listener
+    setupFirebaseListener();
 
     startCountdown(() => {
         raceRunning = true;
@@ -313,6 +323,47 @@ document.getElementById('startBtn').addEventListener('click', () => {
         setTimeout(() => ui.classList.remove('hidden'), 2000);
     });
 });
+
+
+// ============================================
+// Task 2.6: Live Integration (Firebase -> Game)
+// ============================================
+
+function addMarble(name) {
+    if (!name || name.trim() === '') return null;
+    const cleanName = String(name).trim().substring(0, 12);
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    const x = (W / 2) + (Math.random() * 100 - 50);
+    const y = 50;
+
+    const marble = Bodies.circle(x, y, 15, {
+        restitution: 0.6,
+        friction: 0.01,
+        render: { fillStyle: color, strokeStyle: '#fff', lineWidth: 2 },
+        label: cleanName,
+        plugin: { color: color, name: cleanName, finished: false, finishTime: 0 }
+    });
+
+    marbles.push(marble);
+    Composite.add(world, marble);
+    console.log('🎯 Marble spawned:', cleanName);
+    return marble;
+}
+
+let fbListenerActive = false;
+function setupFirebaseListener() {
+    if (fbListenerActive) return;
+    if (typeof onNewJoin !== 'function') {
+        console.warn('⚠️ Firebase helper belum loaded');
+        return;
+    }
+    onNewJoin((data) => {
+        console.log('📥 Firebase join:', data.name);
+        addMarble(data.name);
+    });
+    fbListenerActive = true;
+    console.log('✅ Firebase listener active');
+}
 
 Render.run(render);
 const runner = Runner.create();
