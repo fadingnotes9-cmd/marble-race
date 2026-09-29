@@ -20,7 +20,7 @@ const render = Render.create({
         width: W,
         height: H,
         wireframes: false,
-        background: '#0a0a15',
+        background: 'transparent',
         hasBounds: true
     }
 });
@@ -45,15 +45,19 @@ for (let i = 0; i < TRACK_COUNT; i++) {
     const isLeft = i % 2 === 0;
     const x = isLeft ? W * 0.32 : W * 0.68;
     const angle = isLeft ? 0.35 : -0.35;
-    const hue = 260 - (i * 3.5);
-    const trackColor = 'hsl(' + hue + ', 65%, 40%)';
+    // Warna track ambil dari CSS variable --c-primary
+    const cs = getComputedStyle(document.body);
+    const primaryColor = cs.getPropertyValue('--c-primary').trim() || '#7c3aed';
+    const primaryDark = cs.getPropertyValue('--c-primary-dark').trim() || '#5b21b6';
+    // Buat gradient sederhana dengan mix ke dark
+    const trackColor = i % 2 === 0 ? primaryColor : primaryDark;
 
     walls.push(Bodies.rectangle(x, y, TRACK_W, 20, {
         isStatic: true,
         angle: angle,
         render: {
             fillStyle: trackColor,
-            strokeStyle: '#e94560',
+            strokeStyle: 'rgba(255, 255, 255, 0.4)',
             lineWidth: 2
         }
     }));
@@ -63,7 +67,7 @@ const FINISH_Y = TRACK_START_Y + (TRACK_COUNT * TRACK_GAP) + 100;
 const finishLine = Bodies.rectangle(W / 2, FINISH_Y, W, 25, {
     isStatic: true,
     isSensor: true,
-    render: { fillStyle: '#00b894' },
+    render: { fillStyle: '#10b981' },
     label: 'finish'
 });
 walls.push(finishLine);
@@ -594,5 +598,33 @@ Events.on(engine, 'afterUpdate', () => {
             const _ui = document.getElementById('ui');
             if (_ui) _ui.classList.remove('hidden');
         }, 1500);
+    }
+});
+
+// ============================================
+// Task C.2b: Theme Switcher
+// ============================================
+function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    try {
+        localStorage.setItem('marble-theme', theme);
+    } catch (e) {}
+    console.log('🎨 Theme:', theme);
+}
+
+// (Theme apply dipindahkan ke index.html head)
+// Setup dropdown setelah DOM ready
+window.addEventListener('DOMContentLoaded', () => {
+    const sel = document.getElementById('themeSelect');
+    const saved = (() => {
+        try { return localStorage.getItem('marble-theme'); } catch (e) { return null; }
+    })();
+    if (sel) {
+        if (saved) sel.value = saved;
+        sel.addEventListener('change', (e) => {
+            applyTheme(e.target.value);
+            // Reload supaya track rebuild dengan warna baru
+            setTimeout(() => location.reload(), 300);
+        });
     }
 });

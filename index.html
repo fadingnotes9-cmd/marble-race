@@ -14,6 +14,15 @@
     <link rel="icon" type="image/png" href="assets/icon-192.png">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="design-system.css">
+    <script>
+        // Apply theme SEBELUM script lain load
+        (function applyThemeEarly() {
+            try {
+                var saved = localStorage.getItem("marble-theme");
+                if (saved) document.documentElement.setAttribute("data-theme", saved);
+            } catch (e) {}
+        })();
+    </script>
 </head>
 <body>
     <canvas id="raceCanvas"></canvas>
@@ -32,6 +41,7 @@
         <div id="pesertaList">
             <div class="peserta-empty">Belum ada peserta</div>
         </div>
+        <div id="themeRow"><label for="themeSelect">🎨 Tema:</label><select id="themeSelect"><option value="purple">Ungu</option><option value="blue">Biru</option><option value="green">Hijau</option><option value="pink">Pink</option></select></div>
         <div id="panelActions">
             <button id="resetPesertaBtn">🗑️ Reset</button>
         </div>
