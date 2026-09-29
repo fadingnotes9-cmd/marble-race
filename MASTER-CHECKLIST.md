@@ -40,9 +40,9 @@ Checklist lengkap semua task project. Update setiap kali task selesai.
 ## 📅 MINGGU 2 — YouTube Integration
 
 ### Task 2.1 — Firebase Setup
-- [ ] 2.1a: Bikin project Firebase
-- [ ] 2.1b: Aktifkan Realtime Database (Spark plan)
-- [ ] 2.1c: Buat firebase-config.js (masuk .gitignore!)
+- [x] 2.1a: Bikin project Firebase
+- [x] 2.1b: Aktifkan Realtime Database (Spark plan)
+- [ ] 2.1c: Buat firebase-config.js (SAFE public - web config)
 - [ ] 2.1d: Bikin js/firebase.js helper
 
 ### Task 2.2 — YouTube Chat Listener

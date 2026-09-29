@@ -4,6 +4,31 @@ Catatan tiap sesi kerja. Yang terbaru di paling atas.
 
 ---
 
+
+---
+
+## 📅 Sesi 002 — 2026-09-29 (sore)
+
+**Phase:** Minggu 2 — YouTube Integration
+**Fokus:** Setup Firebase Realtime Database
+
+### ✅ Selesai
+- Task 2.1a: Pilih Firebase project (lama, di-rename)
+- Task 2.1b: Tambah Web App ke Firebase
+- Task 2.1c: Aktifkan Realtime Database (Singapore region)
+- Task 2.1d: Set Security Rules — public read/write HANYA di /joins
+
+### 📌 Firebase Info (BUKAN SECRET)
+- Project ID: sensus-ekonomi-2026
+- Database URL: https://sensus-ekonomi-2026-default-rtdb.asia-southeast1.firebasedatabase.app
+- Region: asia-southeast1 (Singapore)
+- Config web: akan disimpan di js/firebase-config.js (SAFE untuk public)
+
+### 🔜 Next
+- Task 2.2: Bikin js/firebase-config.js + js/firebase.js
+- Task 2.3: Update index.html (load Firebase SDK)
+- Task 2.4: Test koneksi Firebase dari browser
+
 ## 📅 Sesi 001 — 2026-09-29
 
 **Durasi:** ~4 jam (dengan istirahat)
