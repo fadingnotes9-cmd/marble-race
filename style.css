@@ -1,0 +1,89 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    overflow: hidden;
+    touch-action: none;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+html, body {
+    width: 100vw;
+    height: 100vh;
+    background: #0a0a15;
+    font-family: 'Arial', sans-serif;
+}
+#raceCanvas {
+    display: block;
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+#hud {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    z-index: 10;
+    text-align: right;
+}
+#timer {
+    font-size: 20px;
+    font-weight: bold;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 8px 15px;
+    border-radius: 20px;
+    border: 2px solid #00b894;
+    font-family: 'Courier New', monospace;
+    display: none;
+}
+#countdown {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 120px;
+    font-weight: bold;
+    color: #e94560;
+    text-shadow: 0 0 30px rgba(233, 69, 96, 0.8);
+    z-index: 100;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s, transform 0.3s;
+}
+#countdown.show {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.3);
+}
+#countdown.go {
+    color: #00b894;
+    text-shadow: 0 0 30px rgba(0, 184, 148, 0.8);
+}
+#ui {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 10;
+    transition: opacity 0.3s;
+}
+#ui.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+#startBtn {
+    padding: 12px 25px;
+    font-size: 16px;
+    font-weight: bold;
+    background: linear-gradient(135deg, #e94560, #c62a47);
+    color: white;
+    border: none;
+    border-radius: 25px;
+    box-shadow: 0 4px 15px rgba(233, 69, 96, 0.5);
+    cursor: pointer;
+    letter-spacing: 1px;
+}
+#startBtn:active {
+    transform: scale(0.95);
+}
