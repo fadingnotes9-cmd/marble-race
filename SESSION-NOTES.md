@@ -23,7 +23,33 @@ Catatan tiap sesi kerja. Yang terbaru di paling atas.
 - Task 1.2b: MASTER-CHECKLIST.md (87 baris)
 
 ### 🚧 In Progress
-- Task 1.2c: SESSION-NOTES.md (file ini)
+- (selesai semua)
+
+
+### 🎉 Update Akhir Sesi 001 (17:00)
+
+- Task 1.3: package.json + npm scripts (SELESAI)
+  - npm run check → Syntax OK
+  - npm run dev → server jalan di port 8080
+- Task 1.4: GitHub Pages aktif (SELESAI)
+  - URL live: https://fadingnotes9-cmd.github.io/marble-race/
+  - Deploy otomatis setiap git push
+  - Sudah diverifikasi jalan di Chrome HP
+
+### ✅ Minggu 1 Status: SELESAI (100%)
+Semua target Minggu 1 tercapai:
+- [x] live-server + auto-reload
+- [x] Dokumentasi 3 file
+- [x] package.json + npm scripts
+- [x] GitHub Pages live
+
+### 🔜 Next: Minggu 2 — YouTube Integration
+1. Bikin project Firebase (Realtime Database)
+2. Install youtube-chat-next di Termux
+3. Bikin youtube-listener.js (baca chat)
+4. Bikin js/firebase.js + js/youtube.js (frontend)
+5. Test end-to-end dengan live chat asli
+
 
 ### 📌 Temuan Penting
 - Paste panjang di Termux sering kepotong, terutama kalau ada heredoc panjang (>80 baris) atau backtick triple

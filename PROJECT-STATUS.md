@@ -32,6 +32,7 @@ Penonton join via komentar `!join [nama]`.
 
 ## 🚧 Fitur yang Belum
 
+- [x] GitHub Pages deployment (auto-deploy on push)
 - [ ] YouTube Live Chat integration (`!join`)
 - [ ] Track editor visual
 - [ ] Multiple track support
