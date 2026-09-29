@@ -41,7 +41,10 @@ const chat = new LiveChat({ liveId: VIDEO_ID });
 // Event: chat message masuk
 chat.on('chat', async (msg) => {
   const author = msg.author?.name || 'Unknown';
-  const message = (msg.message || '').trim();
+  // msg.message bisa array (dengan emoji/format) atau string
+  const message = Array.isArray(msg.message)
+    ? msg.message.map(p => p.text || p.emojiText || '').join('').trim()
+    : String(msg.message || '').trim();
   
   console.log(`💬 [${author}] ${message}`);
 
@@ -50,7 +53,7 @@ chat.on('chat', async (msg) => {
     const name = message.substring(5).trim() || author;
     try {
       const key = await pushJoin(name, author);
-      console.log(`✅ JOIN: ${name} (key: ${key})`);
+      console.log(`✅ JOIN: ${name} → Firebase key ${key}`);
     } catch (err) {
       console.error('❌ Failed push:', err.message);
     }
