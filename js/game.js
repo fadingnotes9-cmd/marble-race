@@ -306,12 +306,35 @@ document.getElementById('startBtn').addEventListener('click', async () => {
     marbles.forEach(m => Composite.remove(world, m));
     marbles.length = 0;
 
-    // Clear Firebase joins (mulai fresh)
+    // Cek peserta
+    if (pesertaList.length < 2) {
+        showNotif('Minimal 2 peserta untuk mulai');
+        ui.classList.remove('hidden');
+        return;
+    }
+
+    // Buat kelereng dari pesertaList
+    for (const nama of pesertaList) {
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        const x = (W / 2) + (Math.random() * 100 - 50);
+        const y = 50 + (marbles.length * 35);
+        const marble = Bodies.circle(x, y, 15, {
+            restitution: 0.6,
+            friction: 0.01,
+            render: { fillStyle: color, strokeStyle: '#fff', lineWidth: 2 },
+            label: nama,
+            plugin: { color: color, name: nama, finished: false, finishTime: 0 }
+        });
+        marbles.push(marble);
+        Composite.add(world, marble);
+    }
+
+    // Clear Firebase joins (biar fresh ronde berikutnya)
     if (typeof clearJoins === 'function') {
         try { await clearJoins(); } catch(e) { console.warn('clearJoins:', e); }
     }
 
-    // Setup Firebase listener
+    // Setup Firebase listener untuk ronde berikutnya
     setupFirebaseListener();
 
     startCountdown(() => {
@@ -359,10 +382,11 @@ function setupFirebaseListener() {
     }
     onNewJoin((data) => {
         console.log('📥 Firebase join:', data.name);
-        addMarble(data.name);
+        // JANGAN auto-spawn — cuma notif
+        showNotif(data.name + ' minta join!');
     });
     fbListenerActive = true;
-    console.log('✅ Firebase listener active');
+    console.log('✅ Firebase listener active (notif mode)');
 }
 
 Render.run(render);
@@ -374,3 +398,100 @@ window.addEventListener('resize', () => {
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(() => location.reload(), 300);
 });
+
+// ============================================
+// Task 2.7c: Peserta Panel + Notif System
+// ============================================
+
+let pesertaList = [];
+
+// Notif MotoGP-style
+function showNotif(text) {
+    const container = document.getElementById('notifContainer');
+    if (!container) return;
+    const item = document.createElement('div');
+    item.className = 'notif-item';
+    item.textContent = text;
+    container.appendChild(item);
+    setTimeout(() => {
+        if (item.parentNode) item.parentNode.removeChild(item);
+    }, 6000);
+}
+
+// Render daftar peserta
+function renderPeserta() {
+    const list = document.getElementById('pesertaList');
+    const count = document.getElementById('pesertaCount');
+    if (!list || !count) return;
+    count.textContent = pesertaList.length;
+    if (pesertaList.length === 0) {
+        list.innerHTML = '<div class="peserta-empty">Belum ada peserta</div>';
+        return;
+    }
+    list.innerHTML = pesertaList.map((nama, i) =>
+        '<div class="peserta-item">' +
+            '<span>' + (i + 1) + '. ' + nama + '</span>' +
+            '<span class="peserta-remove" data-idx="' + i + '">x</span>' +
+        '</div>'
+    ).join('');
+    list.querySelectorAll('.peserta-remove').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            hapusPeserta(parseInt(e.target.dataset.idx));
+        });
+    });
+}
+
+// Tambah peserta
+function tambahPeserta(nama) {
+    const clean = String(nama || '').trim().substring(0, 12);
+    if (!clean) return false;
+    if (pesertaList.includes(clean)) {
+        showNotif('Peserta ' + clean + ' sudah ada');
+        return false;
+    }
+    if (pesertaList.length >= 20) {
+        showNotif('Maksimal 20 peserta');
+        return false;
+    }
+    pesertaList.push(clean);
+    renderPeserta();
+    return true;
+}
+
+// Hapus peserta
+function hapusPeserta(idx) {
+    if (idx < 0 || idx >= pesertaList.length) return;
+    pesertaList.splice(idx, 1);
+    renderPeserta();
+}
+
+// Reset semua
+function resetPeserta() {
+    if (pesertaList.length === 0) return;
+    pesertaList = [];
+    renderPeserta();
+    showNotif('Peserta di-reset');
+}
+
+// Event listeners UI
+document.getElementById('tambahBtn').addEventListener('click', () => {
+    const input = document.getElementById('namaInput');
+    if (tambahPeserta(input.value)) {
+        input.value = '';
+        input.focus();
+    }
+});
+
+document.getElementById('namaInput').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+        const input = e.target;
+        if (tambahPeserta(input.value)) {
+            input.value = '';
+        }
+    }
+});
+
+document.getElementById('resetPesertaBtn').addEventListener('click', resetPeserta);
+
+// Initial render
+renderPeserta();

@@ -96,3 +96,179 @@ html, body {
     display: inline-block;
     margin-bottom: 5px;
 }
+
+/* ============================================
+   Notifikasi MotoGP-Style (Task 2.7b)
+   ============================================ */
+#notifContainer {
+    position: fixed;
+    bottom: 20px;
+    right: 15px;
+    z-index: 30;
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 8px;
+    pointer-events: none;
+    max-width: 220px;
+}
+
+.notif-item {
+    background: linear-gradient(135deg, #e94560, #c62a47);
+    color: white;
+    padding: 10px 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(233, 69, 96, 0.6);
+    font-weight: bold;
+    font-size: 14px;
+    border-left: 5px solid #f5a623;
+    animation: notifSlideIn 0.4s ease-out, notifFadeOut 0.5s ease-in 5s forwards;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.notif-item::before {
+    content: "🏁 ";
+    margin-right: 3px;
+}
+
+@keyframes notifSlideIn {
+    from {
+        transform: translateX(300px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes notifFadeOut {
+    to {
+        transform: translateX(300px);
+        opacity: 0;
+    }
+}
+
+/* ============================================
+   Panel Peserta (Task 2.7a)
+   ============================================ */
+#pesertaPanel {
+    position: fixed;
+    top: 70px;
+    left: 15px;
+    width: 180px;
+    max-height: 55vh;
+    background: rgba(10, 10, 21, 0.92);
+    border: 2px solid #00b894;
+    border-radius: 12px;
+    padding: 10px;
+    z-index: 20;
+    font-size: 13px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+#panelTitle {
+    color: #00b894;
+    font-weight: bold;
+    font-size: 13px;
+    margin-bottom: 8px;
+    text-align: center;
+}
+
+#inputRow {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 8px;
+}
+
+#namaInput {
+    flex: 1;
+    background: #1a1a2e;
+    border: 1px solid #533483;
+    border-radius: 6px;
+    color: #fff;
+    padding: 6px 8px;
+    font-size: 12px;
+    outline: none;
+    min-width: 0;
+}
+
+#namaInput:focus {
+    border-color: #00b894;
+}
+
+#tambahBtn {
+    background: #00b894;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    width: 32px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+#tambahBtn:active {
+    transform: scale(0.9);
+}
+
+#pesertaList {
+    flex: 1;
+    overflow-y: auto;
+    max-height: 35vh;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.peserta-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #1a1a2e;
+    padding: 4px 8px;
+    border-radius: 5px;
+    font-size: 12px;
+    color: #fff;
+}
+
+.peserta-remove {
+    color: #e94560;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+    padding: 0 3px;
+    user-select: none;
+}
+
+.peserta-empty {
+    color: #666;
+    font-size: 11px;
+    text-align: center;
+    font-style: italic;
+    padding: 8px 4px;
+}
+
+#panelActions {
+    margin-top: 8px;
+}
+
+#resetPesertaBtn {
+    width: 100%;
+    background: #533483;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 6px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+#resetPesertaBtn:active {
+    background: #3a2260;
+}
