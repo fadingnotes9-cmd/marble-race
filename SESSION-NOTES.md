@@ -29,6 +29,39 @@ Catatan tiap sesi kerja. Yang terbaru di paling atas.
 - Task 2.3: Update index.html (load Firebase SDK)
 - Task 2.4: Test koneksi Firebase dari browser
 
+
+### 🎉 Update Sesi 002 (20:40)
+
+**Status: MINGGU 2 SELESAI 100%**
+
+Selesai:
+- Task 2.6: Firebase → game integration
+- Task 2.7: Peserta panel (manual input) + notif MotoGP
+- Task 2.7e-f: Fix keyboard (resize handler dihapus)
+- Task 2.7g: Fix spawn (pause physics + random y)
+- Task 2.8: Hide panel + Live Leaderboard MotoGP-style
+
+Fitur baru:
+- Panel peserta dengan input manual (tidak auto-spawn)
+- Notif slide-in "🏁 Andi minta join!" saat ada !join
+- Kelereng beku saat countdown, jatuh setelah GO
+- Live leaderboard POSISI real-time dengan waktu finis
+- Panel auto-hide saat race, auto-show setelah selesai
+
+### 🔜 Next: Minggu 3 — Track Editor Visual
+1. Design JSON track schema
+2. Bikin editor/index.html + editor.js
+3. Save/load track
+4. Migrasi track hardcode ke JSON
+5. Test multiple track
+
+### 📌 Insight Penting
+- Login key GitHub: fadingnotes9-cmd, nama: Rafandra Farezky
+- Firebase DB: sensus-ekonomi-2026 (asia-southeast1)
+- Chrome HP cache sangat agresif → pakai Incognito saat test
+
+---
+
 ## 📅 Sesi 001 — 2026-09-29
 
 **Durasi:** ~4 jam (dengan istirahat)

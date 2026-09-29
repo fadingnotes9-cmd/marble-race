@@ -1,7 +1,7 @@
 # 📊 Marble Race — Project Status
 
 **Last Updated:** 2026-09-29
-**Current Phase:** Minggu 1 — Setup Tools & Dokumentasi
+**Current Phase:** Minggu 2 SELESAI — YouTube Integration Jalan
 
 ---
 
@@ -33,7 +33,11 @@ Penonton join via komentar `!join [nama]`.
 ## 🚧 Fitur yang Belum
 
 - [x] GitHub Pages deployment (auto-deploy on push)
-- [ ] YouTube Live Chat integration (`!join`)
+- [x] YouTube Live Chat integration (`!join`)
+- [x] Peserta panel manual
+- [x] Live leaderboard MotoGP-style
+- [x] Notif slide-in saat ada join baru
+- [ ] Track editor visual
 - [ ] Track editor visual
 - [ ] Multiple track support
 - [ ] Kustomisasi warna kelereng

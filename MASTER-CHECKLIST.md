@@ -46,16 +46,16 @@ Checklist lengkap semua task project. Update setiap kali task selesai.
 - [ ] 2.1d: Bikin js/firebase.js helper
 
 ### Task 2.2 — YouTube Chat Listener
-- [ ] 2.2a: Install youtube-chat-next
-- [ ] 2.2b: Bikin youtube-listener.js (Node)
-- [ ] 2.2c: Test baca live chat
-- [ ] 2.2d: Filter pesan !join → kirim ke Firebase
+- [x] 2.2a: Install youtube-chat-next
+- [x] 2.2b: Bikin youtube-listener.js (Node)
+- [x] 2.2c: Test baca live chat
+- [x] 2.2d: Filter pesan !join → kirim ke Firebase
 
 ### Task 2.3 — Frontend Integration
-- [ ] 2.3a: Bikin js/youtube.js
-- [ ] 2.3b: Subscribe perubahan Firebase
-- [ ] 2.3c: Auto tambah kelereng saat ada !join
-- [ ] 2.3d: Test end-to-end dengan live chat asli
+- [x] 2.3a: Bikin js/youtube.js
+- [x] 2.3b: Subscribe perubahan Firebase
+- [x] 2.3c: Auto tambah kelereng saat ada !join
+- [x] 2.3d: Test end-to-end dengan live chat asli
 
 ---
 
