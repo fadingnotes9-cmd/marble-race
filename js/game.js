@@ -395,8 +395,13 @@ Runner.run(runner, engine);
 
 let resizeTimer;
 window.addEventListener('resize', () => {
+    // Jangan reload kalau user sedang fokus input (keyboard muncul)
+    const active = document.activeElement;
+    if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA')) {
+        return;
+    }
     clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(() => location.reload(), 300);
+    resizeTimer = setTimeout(() => location.reload(), 500);
 });
 
 // ============================================
