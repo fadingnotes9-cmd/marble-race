@@ -297,6 +297,7 @@ document.getElementById('startBtn').addEventListener('click', async () => {
     const timer = document.getElementById('timer');
 
     ui.classList.add('hidden');
+    document.body.classList.add('racing');
     const _panel = document.getElementById('pesertaPanel');
     if (_panel) _panel.style.display = 'none';
     cameraY = 0;
@@ -350,7 +351,7 @@ document.getElementById('startBtn').addEventListener('click', async () => {
         timer.style.display = 'block';
         updateTimer();
 
-        setTimeout(() => ui.classList.remove('hidden'), 2000);
+        // Tombol tetap hidden selama race (Task 2.8b)
     });
 });
 
@@ -473,8 +474,11 @@ function hapusPeserta(idx) {
 function resetPeserta() {
     pesertaList = [];
     renderPeserta();
+    document.body.classList.remove('racing');
     const _panel = document.getElementById('pesertaPanel');
     if (_panel) _panel.style.display = 'flex';
+    const _ui = document.getElementById('ui');
+    if (_ui) _ui.classList.remove('hidden');
     showNotif('Peserta di-reset');
 }
 
@@ -583,6 +587,7 @@ Events.on(engine, 'afterUpdate', () => {
     if (marbles.length === 0) return;
     if (marbles.every(m => m.plugin.finished)) {
         raceRunning = false;
+        document.body.classList.remove('racing');
         const _panel = document.getElementById('pesertaPanel');
         if (_panel) _panel.style.display = 'flex';
         setTimeout(() => {

@@ -272,3 +272,13 @@ html, body {
 #resetPesertaBtn:active {
     background: #3a2260;
 }
+
+
+/* Task 2.8b racing */
+body.racing #pesertaPanel,
+body.racing #ui {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
