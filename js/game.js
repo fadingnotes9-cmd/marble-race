@@ -52,15 +52,13 @@ for (let i = 0; i < TRACK_COUNT; i++) {
     // Buat gradient sederhana dengan mix ke dark
     const trackColor = i % 2 === 0 ? primaryColor : primaryDark;
 
-    walls.push(Bodies.rectangle(x, y, TRACK_W, 20, {
+    const trackBody = Bodies.rectangle(x, y, TRACK_W, 20, {
         isStatic: true,
         angle: angle,
-        render: {
-            fillStyle: trackColor,
-            strokeStyle: 'rgba(255, 255, 255, 0.4)',
-            lineWidth: 2
-        }
-    }));
+        render: { visible: false }
+    });
+    trackBody.plugin = { isTrack: true, color: trackColor };
+    walls.push(trackBody);
 }
 
 const FINISH_Y = TRACK_START_Y + (TRACK_COUNT * TRACK_GAP) + 100;
@@ -176,6 +174,13 @@ Events.on(render, 'afterRender', () => {
     const ctx = render.context;
     ctx.save();
     ctx.translate(-render.bounds.min.x, -render.bounds.min.y);
+
+    // === C.4a: Track 3D-look ===
+    walls.forEach(w => {
+        if (!w.plugin || !w.plugin.isTrack) return;
+        drawTrack3D(ctx, w);
+    });
+
 
     // === C.3: Trail kelereng ===
     marbles.forEach(m => {
@@ -722,3 +727,57 @@ Events.on(engine, 'afterUpdate', () => {
         if (m.plugin.trail.length > 8) m.plugin.trail.shift();
     });
 });
+
+
+// ============================================
+// Task C.4a: Track 3D-Look Helper
+// ============================================
+function drawTrack3D(ctx, body) {
+    const { x, y } = body.position;
+    const w = body.bounds.max.x - body.bounds.min.x;
+    const h = body.bounds.max.y - body.bounds.min.y;
+    const actualW = Math.sqrt(w * w + h * h) * 0.75;
+    const actualH = 20;
+    const angle = body.angle;
+    const color = body.plugin.color;
+
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(angle);
+
+    const halfW = actualW / 2;
+    const halfH = actualH / 2;
+
+    // Shadow bawah
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
+    ctx.beginPath();
+    ctx.roundRect(-halfW + 3, -halfH + 5, actualW, actualH, 6);
+    ctx.fill();
+
+    // Body gradient
+    const grad = ctx.createLinearGradient(0, -halfH, 0, halfH);
+    grad.addColorStop(0, shadeColor(color, 45));
+    grad.addColorStop(0.5, color);
+    grad.addColorStop(1, shadeColor(color, -40));
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.roundRect(-halfW, -halfH, actualW, actualH, 6);
+    ctx.fill();
+
+    // Top highlight
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.55)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(-halfW + 4, -halfH + 2);
+    ctx.lineTo(halfW - 4, -halfH + 2);
+    ctx.stroke();
+
+    // Border luar
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.4)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.roundRect(-halfW, -halfH, actualW, actualH, 6);
+    ctx.stroke();
+
+    ctx.restore();
+}
