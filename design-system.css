@@ -484,3 +484,48 @@ html, body {
     background-attachment: fixed !important;
     min-height: 100vh;
 }
+
+/* ============================================
+   C.4b: Track Selector
+   ============================================ */
+#trackRow {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    margin-bottom: 4px;
+}
+
+#trackRow label {
+    font-size: 11px;
+    color: var(--c-text-dim);
+    font-weight: 700;
+    font-family: var(--font-heading);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    flex-shrink: 0;
+}
+
+#trackSelect {
+    flex: 1;
+    background: var(--c-bg-deep);
+    border: 2px solid var(--c-bg-light);
+    border-radius: var(--r-md);
+    color: var(--c-text);
+    padding: 5px 8px;
+    font-size: 12px;
+    font-family: var(--font-body);
+    font-weight: 700;
+    cursor: pointer;
+    outline: none;
+    transition: border-color var(--t-fast);
+}
+
+#trackSelect:focus {
+    border-color: var(--c-primary);
+}
+
+#trackSelect option {
+    background: var(--c-bg-deep);
+    color: var(--c-text);
+}

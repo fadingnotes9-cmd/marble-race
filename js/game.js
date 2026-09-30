@@ -40,25 +40,83 @@ walls.push(Bodies.rectangle(W + 20, 1500, 40, 4500, {
     render: { fillStyle: '#e94560' }
 }));
 
-for (let i = 0; i < TRACK_COUNT; i++) {
-    const y = TRACK_START_Y + (i * TRACK_GAP);
-    const isLeft = i % 2 === 0;
-    const x = isLeft ? W * 0.32 : W * 0.68;
-    const angle = isLeft ? 0.35 : -0.35;
-    // Warna track ambil dari CSS variable --c-primary
-    const cs = getComputedStyle(document.body);
-    const primaryColor = cs.getPropertyValue('--c-primary').trim() || '#7c3aed';
-    const primaryDark = cs.getPropertyValue('--c-primary-dark').trim() || '#5b21b6';
-    // Buat gradient sederhana dengan mix ke dark
-    const trackColor = i % 2 === 0 ? primaryColor : primaryDark;
+// ============================================
+// Task C.4b-fix: Baca track type dari localStorage LANGSUNG
+// (sebelum track building jalan)
+// ============================================
+(function readTrackTypeEarly() {
+    try {
+        const saved = localStorage.getItem('marble-track');
+        window.MARBLE_TRACK_TYPE = saved || 'zigzag';
+        console.log('🛤️ Track type:', window.MARBLE_TRACK_TYPE);
+    } catch (e) { 
+        window.MARBLE_TRACK_TYPE = 'zigzag';
+    }
+})();
 
-    const trackBody = Bodies.rectangle(x, y, TRACK_W, 20, {
+// Track colors dari CSS variables
+const cs = getComputedStyle(document.documentElement);
+const primaryColor = cs.getPropertyValue('--c-primary').trim() || '#7c3aed';
+const primaryDark = cs.getPropertyValue('--c-primary-dark').trim() || '#5b21b6';
+const trackType = window.MARBLE_TRACK_TYPE || 'zigzag';
+
+function addTrack(x, y, w, h, angle, color) {
+    const body = Bodies.rectangle(x, y, w, h, {
         isStatic: true,
-        angle: angle,
+        angle: angle || 0,
         render: { visible: false }
     });
-    trackBody.plugin = { isTrack: true, color: trackColor };
-    walls.push(trackBody);
+    body.plugin = { isTrack: true, color: color };
+    walls.push(body);
+}
+
+if (trackType === 'zigzag') {
+    for (let i = 0; i < TRACK_COUNT; i++) {
+        const y = TRACK_START_Y + (i * TRACK_GAP);
+        const isLeft = i % 2 === 0;
+        const x = isLeft ? W * 0.32 : W * 0.68;
+        const angle = isLeft ? 0.35 : -0.35;
+        const color = i % 2 === 0 ? primaryColor : primaryDark;
+        addTrack(x, y, TRACK_W, 20, angle, color);
+    }
+} else if (trackType === 'plinko') {
+    const rows = 12;
+    const cols = Math.floor((W * 0.7) / 80);
+    for (let i = 0; i < rows; i++) {
+        for (let j = 0; j < cols; j++) {
+            const offset = (i % 2 === 0) ? 0 : 40;
+            const x = W * 0.15 + (j * 80) + offset + 40;
+            const y = TRACK_START_Y + (i * 150);
+            if (x > W * 0.85) continue;
+            const peg = Bodies.circle(x, y, 12, {
+                isStatic: true,
+                restitution: 0.8,
+                render: { visible: false }
+            });
+            peg.plugin = { isTrack: true, color: primaryColor, isPeg: true };
+            walls.push(peg);
+        }
+    }
+} else if (trackType === 'spinners') {
+    for (let i = 0; i < 10; i++) {
+        const y = TRACK_START_Y + (i * 200);
+        addTrack(W * 0.2, y, W * 0.35, 18, 0.55, primaryColor);
+        addTrack(W * 0.8, y, W * 0.35, 18, -0.55, primaryDark);
+        const spinner = Bodies.rectangle(W / 2, y + 100, W * 0.5, 18, {
+            render: { visible: false },
+            frictionAir: 0.01,
+            density: 0.1
+        });
+        spinner.plugin = { isTrack: true, color: '#f5a623', isSpinner: true };
+        const pivot = Matter.Constraint.create({
+            pointA: { x: W / 2, y: y + 100 },
+            bodyB: spinner,
+            length: 0,
+            stiffness: 1
+        });
+        walls.push(spinner);
+        Composite.add(world, pivot);
+    }
 }
 
 const FINISH_Y = TRACK_START_Y + (TRACK_COUNT * TRACK_GAP) + 100;
@@ -175,10 +233,26 @@ Events.on(render, 'afterRender', () => {
     ctx.save();
     ctx.translate(-render.bounds.min.x, -render.bounds.min.y);
 
-    // === C.4a: Track 3D-look ===
+    // === C.4a/b: Track 3D-look ===
     walls.forEach(w => {
         if (!w.plugin || !w.plugin.isTrack) return;
-        drawTrack3D(ctx, w);
+        if (w.plugin.isPeg) {
+            const grad = ctx.createRadialGradient(
+                w.position.x - 4, w.position.y - 4, 2,
+                w.position.x, w.position.y, 12
+            );
+            grad.addColorStop(0, shadeColor(w.plugin.color, 60));
+            grad.addColorStop(1, shadeColor(w.plugin.color, -30));
+            ctx.beginPath();
+            ctx.arc(w.position.x, w.position.y, 12, 0, Math.PI * 2);
+            ctx.fillStyle = grad;
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+        } else {
+            drawTrack3D(ctx, w);
+        }
     });
 
 
@@ -781,3 +855,21 @@ function drawTrack3D(ctx, body) {
 
     ctx.restore();
 }
+
+
+// (Track selector init dipindah ke atas — Task C.4b-fix)
+
+
+// Setup dropdown track saat DOM ready
+window.addEventListener('DOMContentLoaded', () => {
+    const sel = document.getElementById('trackSelect');
+    if (!sel) return;
+    try {
+        const saved = localStorage.getItem('marble-track');
+        if (saved) sel.value = saved;
+    } catch (e) {}
+    sel.addEventListener('change', (e) => {
+        try { localStorage.setItem('marble-track', e.target.value); } catch (er) {}
+        location.reload();
+    });
+});
