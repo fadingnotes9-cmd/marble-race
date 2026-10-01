@@ -873,3 +873,29 @@ window.addEventListener('DOMContentLoaded', () => {
         location.reload();
     });
 });
+
+// ============================================
+// Task C.5a: Splash Screen
+// ============================================
+(function splashScreen() {
+    window.addEventListener('DOMContentLoaded', () => {
+        const splash = document.getElementById('splashScreen');
+        const bar = document.getElementById('splashBar');
+        if (!splash || !bar) return;
+
+        // Progress animation 0 → 100% dalam ~1.2 detik
+        let progress = 0;
+        const interval = setInterval(() => {
+            progress += 8 + Math.random() * 10;
+            if (progress >= 100) {
+                progress = 100;
+                clearInterval(interval);
+                setTimeout(() => {
+                    splash.classList.add('hidden');
+                    console.log('✅ Splash done');
+                }, 400);
+            }
+            bar.style.width = progress + '%';
+        }, 100);
+    });
+})();
