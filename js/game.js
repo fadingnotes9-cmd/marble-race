@@ -899,3 +899,51 @@ window.addEventListener('DOMContentLoaded', () => {
         }, 100);
     });
 })();
+
+// ============================================
+// Task C.5b: Menu Screen Logic
+// ============================================
+window.addEventListener('DOMContentLoaded', () => {
+    const menu = document.getElementById('menuScreen');
+    const splash = document.getElementById('splashScreen');
+    const playBtn = document.getElementById('playBtn');
+    
+    if (!menu) return;
+
+    // Splash → Menu transition
+    // Splash auto-hides setelah ~1.5s, lalu munculkan menu
+    const splashObserver = setInterval(() => {
+        if (!splash || splash.classList.contains('hidden')) {
+            clearInterval(splashObserver);
+            // Tunggu sebentar biar fade splash selesai
+            setTimeout(() => {
+                menu.classList.remove('hidden');
+                console.log('🎬 Menu shown');
+            }, 200);
+        }
+    }, 200);
+
+    // Tombol PLAY → sembunyikan menu, tampilkan game
+    if (playBtn) {
+        playBtn.addEventListener('click', () => {
+            menu.classList.add('hidden');
+            console.log('▶ Play clicked');
+        });
+    }
+
+    // Tombol Setting (placeholder)
+    const setBtn = document.getElementById('settingsBtn');
+    if (setBtn) {
+        setBtn.addEventListener('click', () => {
+            showNotif('Setting segera hadir!');
+        });
+    }
+
+    // Tombol About (placeholder)
+    const aboutBtn = document.getElementById('aboutBtn');
+    if (aboutBtn) {
+        aboutBtn.addEventListener('click', () => {
+            showNotif('Marble Race v1.0 — Live Streaming Ready');
+        });
+    }
+});
